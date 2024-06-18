@@ -1,16 +1,29 @@
+interface Item {
+    id: number,
+    title: string,
+    status: ItemStatus,
+    completedOn?: Date,
+}
+
+enum ItemStatus {
+    ToDo = "todo",
+    InProgress = "in-progress",
+    Done = "done"
+}
+
 const todoItems = [
-    { id: 1, title: "Learn HTML", status: "done", completedOn: new Date("2021-09-11") },
-    { id: 2, title: "Learn TypeScript", status: "in-progress" },
-    { id: 3, title: "Write the best app in the world", status: "todo" },
+    { id: 1, title: "Learn HTML", status: ItemStatus.Done, completedOn: new Date("2021-09-11") },
+    { id: 2, title: "Learn TypeScript", status: ItemStatus.InProgress },
+    { id: 3, title: "Write the best app in the world", status: ItemStatus.ToDo },
 ]
 
-function addTodoItem(todo) {
-    const id = getNextId(todoItems)
+function addTodoItem(todo: string): Item {
+    const id: number = getNextId(todoItems)
 
     const newTodo = {
         id,
         title: todo,
-        status: "todo",
+        status: ItemStatus.ToDo,
     }
 
     todoItems.push(newTodo)
