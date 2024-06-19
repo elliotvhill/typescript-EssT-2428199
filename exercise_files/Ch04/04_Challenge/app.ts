@@ -4,6 +4,8 @@ function query<T>(
     // query: Record<keyof T, (val: T[keyof T]) => boolean> // Simpler, partial solution is to convert to a Record
     query: {
         [TProp in keyof T]?: (val: T[TProp]) => boolean
+        // [name of a key w/in T[]]optional?: (val: property val of T[i], where i is the name of the key )
+        // e.g. [name in keyof Contact[]]?: (val: Contact[name])
     }
 ) {
     return items.filter(item => {
