@@ -3,6 +3,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@types/jquery": "^3.5.30"
+    "@types/jquery": "^3.5.30",
+    "reflect-metadata": "^0.2.2"
   }
 }
