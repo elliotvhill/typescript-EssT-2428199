@@ -14,18 +14,22 @@ interface Contact {
     email: string;
 }
 
-interface Query {
+interface Query<TProp> { // 'TProp' --> i.e. 'target property'
     sort?: 'asc' | 'desc';
-    matches(val): boolean;
+    matches(val: TProp): boolean;
 }
 
-type ContactQuery = Partial<Record<keyof Contact, Query>>;
+// type ContactQuery = Partial<Record<keyof Contact, Query>>;
+// Mapped type definition instead of above: 
+type ContactQuery = {
+    [TProp in keyof Contact]?: Query<Contact[TProp]>
+}
 
 function searchContacts(contacts: Contact[], query: ContactQuery) {
     return contacts.filter(contact => {
         for (const property of Object.keys(contact) as (keyof Contact)[]) {
             // get the query object for this property
-            const propertyQuery = query[property];
+            const propertyQuery = query[property] as Query<Contact[keyof Contact]>;
             // check to see if it matches
             if (propertyQuery && propertyQuery.matches(contact[property])) {
                 return true;

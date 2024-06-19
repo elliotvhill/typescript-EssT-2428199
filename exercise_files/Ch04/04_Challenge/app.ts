@@ -1,6 +1,10 @@
 function query<T>(
     items: T[],
-    query: any // <--- replace this!
+    // query: any // <--- replace this!
+    // query: Record<keyof T, (val: T[keyof T]) => boolean> // Simpler, partial solution is to convert to a Record
+    query: {
+        [TProp in keyof T]?: (val: T[TProp]) => boolean
+    }
 ) {
     return items.filter(item => {
         // iterate through each of the item's properties
