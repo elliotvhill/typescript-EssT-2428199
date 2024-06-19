@@ -6,23 +6,36 @@ const currentUser = {
     id: 1234,
     roles: ["ContactEditor"],
     isAuthenticated(): boolean {
-        return true
+        return true;
     },
     isInRole(role: string): boolean {
         return this.roles.contains(role);
-    }
-}
+    },
+};
 
-function authorize(target: any, property: string, descriptor: PropertyDescriptor) {
-    const wrapped = descriptor.value
+// Decorator Factory -> function that creaetes decorators, i.e. current decorator definition becomes the return value of another (dec factory) function
 
-    descriptor.value = function () {
-        if (!currentUser.isAuthenticated()) {
-            throw Error("User is not authenticated");
-        }
+// 'authorize' method decorator
+function authorize(role: string) {
+    return function authorizeDecorator( // <-- decorator factory wrapper
+        target: any,
+        property: string,
+        descriptor: PropertyDescriptor
+    ) {
+        // copy original logic so it is not lost when function below overwrites it
+        const wrapped = descriptor.value;
 
-        return wrapped.apply(this, arguments);
-    }
+        descriptor.value = function () {
+            if (!currentUser.isAuthenticated()) {
+                throw Error("User is not authenticated");
+            }
+            if (!currentUser.isInRole(role)) {
+                throw Error(`User is not in role ${role}`);
+            }
+    
+            return wrapped.apply(this, arguments);
+        };
+    };
 }
 
 class ContactRepository {
@@ -30,11 +43,8 @@ class ContactRepository {
 
     @authorize("ContactViewer")
     getContactById(id: number): Contact | null {
-        if (!currentUser.isInRole("ContactViewer")) {
-            throw Error("User not authorized to execute this action");
-        }
-
-        const contact = this.contacts.find(x => x.id === id);
+     
+        const contact = this.contacts.find((x) => x.id === id);
         return contact;
     }
 
