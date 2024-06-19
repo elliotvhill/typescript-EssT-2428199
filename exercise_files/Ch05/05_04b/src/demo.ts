@@ -30,6 +30,29 @@ function authorize(role: string) {
     }
 }
 
+// Class Decorator
+function freeze(constructor: Function) { // clarifying that the 'target' being passed is the class' constructor function
+    Object.freeze(constructor)
+    Object.freeze(constructor.prototype)
+}
+
+function singleton<T extends { new(...args: any[]): {} }>(constructor: T) {
+    return class Singleton extends constructor {
+        static _instance = null;
+
+        constructor(...args) {
+            super(...args);
+            if (Singleton._instance) {
+                throw Error("Duplicate instance")
+            }
+
+            Singleton._instance = this
+        }
+    }
+}
+
+@freeze
+@singleton
 class ContactRepository {
     private contacts: Contact[] = [];
 
