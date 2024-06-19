@@ -13,6 +13,36 @@ const currentUser = {
     }
 }
 
+// 'authorize' method decorator
+function authorize(
+    target: any, // object to which the decorator is being applied
+    property: string, // name of the property to which the decorator is being applied
+    descriptor: PropertyDescriptor // object containing current metadata about the property
+) {
+    // Option 1: edit descriptor in place to modify behavior of the method
+        // descriptor.value = function () {}
+
+    // Option 2: return a new descriptor object that replaces the current one
+        // return {
+        //     // ...make any changes here
+        // } as PropertyDescriptor
+    
+    const wrapped = descriptor.value // copy original logic so it is not lost when function below overwrites it
+
+    descriptor.value = function () {
+        if (!currentUser.isAuthenticated()) {
+            throw Error("User is not authenticated");
+        }
+
+        try {
+            return wrapped.apply(this, arguments);
+        } catch (ex) {
+            // some logging logic
+            throw ex;
+        }
+    }
+}
+
 class ContactRepository {
     private contacts: Contact[] = [];
 
